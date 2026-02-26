@@ -1,40 +1,30 @@
 import pandas as pd
 import requests
 from tqdm import tqdm
-import time
+from datetime import datetime
 
+liens = pd.read_csv('./url/csv_url.csv', sep=',', encoding='utf-8')
+liens = liens.iloc[1:10]  # garde les lignes 1 à 9
 
-
-liens = pd.read_csv('./url/csv_url.csv', sep=',',encoding='utf-8')
-# liens = liens[1:1000]
-fonctionnels = pd.DataFrame(columns=['URL', 'Statut'])
-# Fonction pour tester un lien
 def check_link(url):
     try:
-        response = requests.get(url, timeout=5)  # Timeout de 5 secondes
-        if response.status_code == 200 or response.status_code == 403:
-            fonctionnels = pd.DataFrame({'URL': [url], 'Statut': ['✅ Fonctionnel']})
+        response = requests.get(url, timeout=5)
+        if response.status_code in [200, 403]:
             return "✅ Fonctionnel"
-        else:
-            return f"⚠️ Problème ({response.status_code})"
+        return f"⚠️ Problème ({response.status_code})"
     except requests.RequestException:
         return "❌ Inaccessible"
 
-# Initialiser la barre de progression
 results = []
 with tqdm(total=len(liens), desc="Vérification des liens", unit=" lien") as pbar:
-    for index, row in liens.iterrows():
-        url = row['liens_urls']
-        
-        status = check_link(url)  # Vérifier le lien
-        results.append((url, status))  # Stocker le résultat
-        
-        pbar.update(1)  # Mise à jour de la progression
-        
+    for _, row in liens.iterrows():
+        url = row['url']
+        status = check_link(url)
+        tested_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # datetime du test
+        results.append((url, status, tested_at))
+        pbar.update(1)
 
-# Convertir les résultats en DataFrame
-df_results = pd.DataFrame(results, columns=["URL", "Statut"])
-# df_results.to_csv('./url/test_liens_validation.csv', index=False, encoding='utf-8')
-# fonctionnels.to_csv('./url/iens_fonctionnels.csv', index=False, encoding='utf-8')
-# Afficher les résultats
+df_results = pd.DataFrame(results, columns=["url", "statut", "datetime"])
+df_results.to_csv('./url/test_liens_validation.csv', index=False, encoding='utf-8')
+
 print(df_results)

@@ -1,4 +1,4 @@
- pandas
+pandas
 selenium
 re
 webdriver_manager
