@@ -5,14 +5,14 @@ import time
 
 
 
-liens = pd.read_csv('./url/urls_cleaned.csv', sep=',',encoding='utf-8')
+liens = pd.read_csv('./url/csv_url.csv', sep=',',encoding='utf-8')
 # liens = liens[1:1000]
 fonctionnels = pd.DataFrame(columns=['URL', 'Statut'])
 # Fonction pour tester un lien
 def check_link(url):
     try:
         response = requests.get(url, timeout=5)  # Timeout de 5 secondes
-        if response.status_code == 200:
+        if response.status_code == 200 or response.status_code == 403:
             fonctionnels = pd.DataFrame({'URL': [url], 'Statut': ['✅ Fonctionnel']})
             return "✅ Fonctionnel"
         else:
