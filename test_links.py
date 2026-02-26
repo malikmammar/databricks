@@ -25,6 +25,6 @@ with tqdm(total=len(liens), desc="Vérification des liens", unit=" lien") as pba
         pbar.update(1)
 
 df_results = pd.DataFrame(results, columns=["url", "statut", "datetime"])
-df_results.to_csv('./url/test_liens_validation.csv', index=False, encoding='utf-8')
+df_results.to_csv(f'./url/{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}.csv', index=False, encoding='utf-8')
 
 print(df_results)
